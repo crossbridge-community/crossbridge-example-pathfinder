@@ -26,28 +26,43 @@
 # =END MIT LICENSE
 #
 
-.PHONY: clean all 
+# Purpose: List of symbols that must be always preserved using CrossBridge SDK
+# Author: Andras Csizmadia
+# Important: Always leave one blank line at the end, for appending custom symbols
 
-all: check
-	@echo "-------- PathFinder Example --------"
+# built in symbols that must always be preserved
+_start1
+malloc
+free
+memcpy
+memmove
+flascc_uiTickProc
+_sync_synchronize
 
-	@echo "\n->Create LLVM bitcode of just our interface to get symbols"
-	"$(FLASCC)/usr/bin/g++" -O4 -c as3api.cpp
+# symbols for C++ exception handling
+_Unwind_SjLj_Register
+_Unwind_SjLj_Resume
+_Unwind_SjLj_Unregister
+_Unwind_SjLj_RaiseException
 
-	@echo "\n->Copy the base flascc symbols need to run"
+# core specific symbols
+__hack_used
+_main
+main
 
-	@echo "\n->Pull out symbols of the LLVM bitcode of our interface "
-	"$(FLASCC)/usr/bin/nm" as3api.o | grep " T " | awk '{print $$3}' | sed 's/__/_/' >> exports.txt
+# symbols specific to glsl2agal
+compileShader
 
-	@echo "-> Compile the AS3 wrapper class to ABC"
-	$(ASC2) -abcfuture -AS3 -import $(call nativepath,$(FLASCC)/usr/lib/builtin.abc) -import $(call nativepath,$(FLASCC)/usr/lib/playerglobal.abc) PathFinderWrapper.as
+# symbols specific to libMath
+__muldi3
+__umuldi3
+__udivdi3
+__umoddi3
 
-	@echo "\n->Now compile a SWC and demo SWF"
-	"$(FLASCC)/usr/bin/g++" -O4 -flto-api=exports.txt PathFinderWrapper.abc micropather.cpp pathfinder.cpp as3api.cpp main.cpp -emit-swc=com.renaun.flascc -o PathFinder.swc
+# symbols specific to libVGL
+__avm2_vgl_argb_buffer
+vglttyioctl
+vgl_cur_mx
+vgl_cur_my
 
-	cp PathFinder.swc PathFinderAS3Project/libs/
-
-include Makefile.common
-
-clean:
-	rm -f *.swf *.swc *.abc PathFinderAS3Project/libs/PathFinder.swc *.bc *.exe exports.txt *.o
+# custom symbols
