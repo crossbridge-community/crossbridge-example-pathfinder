@@ -48,7 +48,7 @@ all: check
 
 	cp PathFinder.swc PathFinderAS3Project/libs/
 
-include ../Makefile.common
+include Makefile.common
 
 clean:
 	rm -f *.swf *.swc *.abc PathFinderAS3Project/libs/PathFinder.swc *.bc *.exe exports.txt *.o
