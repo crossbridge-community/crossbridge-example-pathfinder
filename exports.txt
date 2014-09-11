@@ -66,3 +66,7 @@ vgl_cur_mx
 vgl_cur_my
 
 # custom symbols
+_Z13flascc_setMapv
+_Z14flascc_getPathv
+_Z19flascc_createPatherv
+_Z19flascc_deletePatherv
